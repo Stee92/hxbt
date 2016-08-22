@@ -30,7 +30,7 @@ class Selector<T> extends Composite<T>
 		}
 	}
 	
-	override function update(context : T, dt : Float) : Status
+	override function update(context : T, dt : Float) : Void
 	{
 		m_currentChild = m_children[m_currentIndex];
 		var s = m_currentChild.tick(context, dt);
@@ -38,7 +38,7 @@ class Selector<T> extends Composite<T>
 		//	If the child succeeds or is still running, early return.
 		if (s != Status.FAILURE)
 		{
-			return s;
+			return;
 		}	
 		m_currentIndex++;
 		//	If the end of the children is hit, that means the whole thing fails.
@@ -46,10 +46,12 @@ class Selector<T> extends Composite<T>
 		{
 			//	Reset index otherwise it will crash on next run through
 			m_currentIndex = 0;
-			return Status.FAILURE;
+			status = Status.FAILURE;
+			return;
 		}
-
-		return Status.RUNNING;
+		
+		status = Status.RUNNING;
+		return;
 	}
 	
 }

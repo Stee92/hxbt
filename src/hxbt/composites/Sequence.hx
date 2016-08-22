@@ -32,8 +32,10 @@ class Sequence<T> extends Composite<T>
 		}
 	}
 	
-	override function update(context : T, dt : Float) : Status
+	override function update(context : T, dt : Float) : Void
 	{
+		if (status == Status.SUCCESS) return; // do not repeat the sequence
+		
 		// get the current child which is being evaluated
 		m_currentChild = m_children[m_currentIndex];
 		var s = m_currentChild.tick(context, dt);
@@ -41,7 +43,7 @@ class Sequence<T> extends Composite<T>
 		//	If the child failed or is still running, early return.
 		if (s != Status.SUCCESS)
 		{
-			return s;
+			return;
 		}
 		m_currentIndex++;
 		//	If end of array hit the whole sequence succeeded.
@@ -49,9 +51,11 @@ class Sequence<T> extends Composite<T>
 		{
 			//	Reset index otherwise it will crash on next run through
 			m_currentIndex = 0;
-			return Status.SUCCESS;
+			status = Status.SUCCESS;
+			return;
 		}
 		
-		return Status.RUNNING;
+		status = Status.RUNNING;
+		return;
 	}
 }
